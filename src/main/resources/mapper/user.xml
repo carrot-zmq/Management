@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="soochow.zmq.dao.mapper.UserMapper">
+
+
+    <sql id="select_columns">
+
+    </sql>
+
+    <!--id对应UserDAO接口方法名-->
+    <!--parameterType对应参数类型-->
+    <!--resultType对应返回值类型-->
+    <!--注意sql语句字段和数据库对应-->
+    <select id="queryById" parameterType="long" resultType="soochow.zmq.model.User">
+        SELECT * FROM ur_table WHERE id = #{id}
+    </select>
+
+    <select id="queryByName" parameterType="java.lang.String" resultType="soochow.zmq.model.User">
+        SELECT * FROM ur_table WHERE name = #{name}
+    </select>
+
+    <select id="queryAll" resultType="soochow.zmq.model.User">
+        SELECT * FROM ur_table ;
+    </select>
+
+    <select id="queryAccount" parameterType="java.lang.String" resultType="soochow.zmq.model.User">
+        select * from ur_table where name = #account# or email = #account# or mobile = #account#
+    </select>
+
+    <insert id="add" parameterType="soochow.zmq.model.User" >
+        insert into USER( name, nick_name, real_name, created_date, modified_date, status, email, mobile) values
+        (#name#, #nickName#, #realName#, #createdDate#, #modfiedDate#, #status#, #email#, #mobile#)
+    </insert>
+</mapper>

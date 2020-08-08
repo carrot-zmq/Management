@@ -1,0 +1,20 @@
+server:
+  port: 8091
+
+#### Database Connection Pool Properties
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/zmq_management?serverTimezone=GMT+8&useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+    username: root
+    password: root0107
+
+
+mybatis:
+  #  mapper文件
+  mapper-locations: mapper/*.xml
+  #  实体类
+  type-aliases-package: soochow.zmq.model
+
+  configuration:
+    # mapUnderscoreToCamelCase: true
