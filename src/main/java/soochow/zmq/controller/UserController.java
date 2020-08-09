@@ -1,26 +1,20 @@
 package soochow.zmq.controller;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import soochow.zmq.dao.mapper.TenantMapper;
-import soochow.zmq.dao.mapper.UserMapper;
 import soochow.zmq.model.ResultVO;
 import soochow.zmq.model.User;
 import soochow.zmq.service.UserManageService;
 
 import javax.annotation.Resource;
-import java.io.Serializable;
 
 @Controller
 @RestController
-public class HelloWorldController {
+public class UserController {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(HelloWorldController.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
 
     @Resource

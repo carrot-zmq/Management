@@ -1,5 +1,6 @@
 package soochow.zmq.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import soochow.zmq.dao.mapper.TenantMapper;
 import soochow.zmq.dao.mapper.UserMapper;
@@ -12,6 +13,8 @@ import soochow.zmq.service.UserManageService;
 import javax.annotation.Resource;
 import java.sql.SQLException;
 
+
+@Slf4j
 public class UserManageServiceImpl implements UserManageService {
 
     @Resource
@@ -38,16 +41,19 @@ public class UserManageServiceImpl implements UserManageService {
         if (null == tenant) {
             return ResultVO.fail("用户所属租户无效");
         }
+        user.normalize();
         // todo 可以通过数据库添加唯一索引之类的约束 放置重复用户名，重复有效，重复手机号等，也可以业务逻辑先去查数据库，看是否能查到，如果能，
         // 则说明已经被注册，返回失败
         try {
-            long id = userMapper.add(user);
-            user.setU_id(id);
+            userMapper.add(user);
+            log.info("注册成功:{}", user.getU_id());
             return ResultVO.success(user);
         } catch (Exception ex) {
-
+            log.error("注册发生异常", ex);
+            return ResultVO.fail(ex.getMessage());
         } catch (Throwable throwable) {
-
+            log.error("注册发生严重错误", throwable);
+            return ResultVO.fail(throwable.getMessage());
         }
     }
 }

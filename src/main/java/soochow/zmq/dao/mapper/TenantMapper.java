@@ -1,8 +1,10 @@
 package soochow.zmq.dao.mapper;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import soochow.zmq.model.Tenant;
 
+@Mapper
 public interface TenantMapper {
 
     Tenant add(Tenant tenant);

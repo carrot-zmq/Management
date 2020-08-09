@@ -10,3 +10,18 @@
   "mobile": "1311111111",
   "ext": null
 }
+
+{
+  "u_id": null,
+  "owned_tenant": 1L,
+  "u_name": "zmq",
+  "u_real_name": "zhangmengqian",
+  "pwd": "root0107",
+  "u_status": "Active",
+  "u_describe": null,
+  "u_phone": null,
+  "u_email": null,
+  "u_create_time": null,
+  "is_deleted": null,
+  "u_extend": null
+}

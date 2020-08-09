@@ -12,24 +12,33 @@
     <!--parameterType对应参数类型-->
     <!--resultType对应返回值类型-->
     <!--注意sql语句字段和数据库对应-->
-    <select id="queryById" parameterType="long" resultType="soochow.zmq.model.User">
-        SELECT * FROM ur_table WHERE id = #{id}
+    <select id="queryById" parameterType="long" resultType="User">
+        SELECT * FROM user_table WHERE u_id = #{id} and is_deleted = 'N'
     </select>
 
-    <select id="queryByName" parameterType="java.lang.String" resultType="soochow.zmq.model.User">
-        SELECT * FROM ur_table WHERE name = #{name}
+    <select id="queryByName" parameterType="java.lang.String" resultType="User">
+        SELECT * FROM user_table WHERE u_name = #{name} and is_deleted = 'N'
     </select>
 
-    <select id="queryAll" resultType="soochow.zmq.model.User">
-        SELECT * FROM ur_table ;
+    <select id="queryAll" resultType="User">
+        SELECT * FROM user_table WHERE is_deleted = 'N';
     </select>
 
-    <select id="queryAccount" parameterType="java.lang.String" resultType="soochow.zmq.model.User">
-        select * from ur_table where name = #account# or email = #account# or mobile = #account#
+    <select id="queryAccount" parameterType="java.lang.String" resultType="User">
+        select * from user_table where (u_name = #{account} or u_email = #{account} or u_phone = #{account}) and is_deleted = 'N'
     </select>
 
-    <insert id="add" parameterType="soochow.zmq.model.User" >
-        insert into USER( name, nick_name, real_name, created_date, modified_date, status, email, mobile) values
-        (#name#, #nickName#, #realName#, #createdDate#, #modfiedDate#, #status#, #email#, #mobile#)
+    <insert id="add" parameterType="User" useGeneratedKeys="true" keyProperty="u_id" keyColumn="u_id">
+        insert into user_table( owned_tenant, u_name, u_real_name, pwd, u_status, u_describe, u_phone, u_email, u_create_time, u_modified_by) values
+        (#{owned_tenant}, #{u_name}, #{u_real_name}, #{pwd}, #{u_status}, #{u_describe}, #{u_phone}, #{u_email}, #{u_create_time}, #{u_modified_by})
     </insert>
+
+    <update id="removeByUserName" parameterType="java.lang.String" >
+        update user_table set is_deleted='Y' where (u_name=#{name} and is_deleted='N')
+    </update>
+
+    <!--有问题 -->
+    <delete id="remove" parameterType="User">
+        delete from user_table where u_id=#{user.getu_id()}
+    </delete>
 </mapper>

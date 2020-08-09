@@ -3,8 +3,13 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="soochow.zmq.dao.mapper.TenantMapper">
 
-    <select id="queryById" parameterType="long" resultType="soochow.zmq.model.Tenant">
-        select * from tenant where tenant_id = #tenantId# and is_deleted = 'N';
+    <select id="queryById" parameterType="long" resultType="Tenant">
+        select * from tenant_table where t_id = #{tenantId} and is_deleted = 'N'
     </select>
+
+    <insert id="add" parameterType="Tenant">
+        insert  into tenant_table ( t_name, t_describe, t_type, t_create_time, t_priority) values
+        (#{t_name}, #{t_describe}, #{t_type}, #{t_create_time}, #{t_priority})
+    </insert>
 
 </mapper>

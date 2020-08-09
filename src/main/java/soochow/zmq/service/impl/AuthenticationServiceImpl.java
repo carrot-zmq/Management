@@ -1,6 +1,7 @@
 package soochow.zmq.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import soochow.zmq.model.AccountStatus;
 import soochow.zmq.model.User;
 import soochow.zmq.service.AuthenticationService;
 import soochow.zmq.service.UserQueryService;
@@ -36,6 +37,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (!user.getPwd().equals(pwd)) {
             return false;
         }
+
+        if (user.getU_status() != AccountStatus.Active) {
+            return false;
+        }
+
         HttpSession session = request.getSession();
         session.setAttribute(AUTHENTICATION_KEY, session.getId());
 

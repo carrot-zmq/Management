@@ -13,7 +13,7 @@ public interface UserMapper {
      * @param user
      * @return
      */
-    long add(User user);
+    int add(User user);
 
     /**
      * 移除用户，可能是逻辑删，可能是物理删，看需要
@@ -25,10 +25,11 @@ public interface UserMapper {
 
     /**
      * 通过账户名移除用户
+     * 逻辑删
      * @param name
      * @return
      */
-    boolean removeByUserId(@Param("name") String name);
+    boolean removeByUserName(@Param("name") String name);
 
 
     /**
