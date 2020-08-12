@@ -2,11 +2,9 @@ package soochow.zmq.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import soochow.zmq.service.AuthenticationService;
-import soochow.zmq.service.PwdValidator;
-import soochow.zmq.service.UserManageService;
-import soochow.zmq.service.UserQueryService;
+import soochow.zmq.service.*;
 import soochow.zmq.service.impl.AuthenticationServiceImpl;
+import soochow.zmq.service.impl.RoleQueryServiceImpl;
 import soochow.zmq.service.impl.UserManageServiceImpl;
 import soochow.zmq.service.impl.UserQueryServiceImpl;
 
@@ -34,5 +32,12 @@ public class UserConfiguration {
     public UserQueryService userQueryService() {
         return new UserQueryServiceImpl();
     }
+
+    @Bean
+    public RoleQueryService roleQueryService(){
+        return new RoleQueryServiceImpl();
+    }
+
+
 
 }

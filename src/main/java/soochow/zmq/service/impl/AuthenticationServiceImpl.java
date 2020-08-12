@@ -2,8 +2,10 @@ package soochow.zmq.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import soochow.zmq.model.AccountStatus;
+import soochow.zmq.model.Role;
 import soochow.zmq.model.User;
 import soochow.zmq.service.AuthenticationService;
+import soochow.zmq.service.RoleQueryService;
 import soochow.zmq.service.UserQueryService;
 
 import javax.annotation.Resource;
@@ -17,6 +19,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Resource
     private UserQueryService userQueryService;
+    @Resource
+    private RoleQueryService roleQueryService;
 
     @Override
     public boolean isAuthenticated(HttpServletRequest request) {
@@ -26,20 +30,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public boolean login(String id, String pwd, HttpServletRequest request, HttpServletResponse response) {
+    public String login(String id, String pwd, HttpServletRequest request, HttpServletResponse response) {
         if (StringUtils.isBlank(id) || StringUtils.isBlank(pwd)) {
-            return false;
+            return "登陆失败";
         }
         User user = userQueryService.queryAccount(id);
         if (null == user) {
-            return false;
+            return "登陆失败";
         }
         if (!user.getPwd().equals(pwd)) {
-            return false;
+            return "登陆失败";
         }
 
         if (user.getU_status() != AccountStatus.Active) {
-            return false;
+            return "账户冻结";
         }
 
         HttpSession session = request.getSession();
@@ -47,6 +51,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         response.addCookie(new Cookie(AUTHENTICATION_KEY + "_test", session.getId()));
 
-        return true;
+        Role role=roleQueryService.queryById(user.getU_id());
+        String rName=role.getR_name();
+        rName= user.getU_name()+":"+rName;
+
+        return rName+" "+"登陆成功";
     }
 }

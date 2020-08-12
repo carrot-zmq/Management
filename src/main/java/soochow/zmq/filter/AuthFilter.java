@@ -3,8 +3,11 @@ package soochow.zmq.filter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.UrlPathHelper;
+import org.springframework.web.util.pattern.PathPatternRouteMatcher;
 import soochow.zmq.service.AuthenticationService;
 
 import javax.annotation.Resource;
@@ -24,6 +27,7 @@ public class AuthFilter extends OncePerRequestFilter {
 
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
     private final Set<String> anonymousUrls;
+    private final PathMatcher pathMatcher = new AntPathMatcher();
 
     @Resource
     AuthenticationService authenticationService;
@@ -50,11 +54,15 @@ public class AuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                                     FilterChain filterChain) throws ServletException, IOException {
         String requestPath = urlPathHelper.getRequestUri(httpServletRequest);
-        if (!anonymousUrls.contains(requestPath) && !authenticationService.isAuthenticated(httpServletRequest)) {
+        if (!canAccessAnonymous(requestPath) && !authenticationService.isAuthenticated(httpServletRequest)) {
             redirectToLoginUrl(httpServletResponse);
             return;
         }
 
         filterChain.doFilter(httpServletRequest, httpServletResponse);
+    }
+
+    private boolean canAccessAnonymous(String requestPath) {
+        return anonymousUrls.stream().anyMatch(anonymousUrlPattern -> pathMatcher.match(anonymousUrlPattern, requestPath));
     }
 }

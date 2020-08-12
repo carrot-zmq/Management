@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="soochow.zmq.dao.mapper.RoleMapper">
+
+    <select id="queryAll"  resultType="Role">
+        select * from role_table
+    </select>
+
+    <insert id="add" parameterType="Role" >
+        insert into role_table(r_id, r_name) values
+        (#{r_id}, #{r_name})
+    </insert>
+
+
+    <select id="queryById" parameterType="long" resultType="Role">
+        select * from role_table where r_id in (select r_id from ur_table where u_id=#{id}) limit 1
+    </select>
+
+    <update id="update" parameterType="Role" >
+        update role_table set r_name=#{r_name} where r_id = #{r_id}
+    </update>
+
+    <update id="remove" parameterType="Tenant" >
+        update tenant_table set is_deleted='N' where t_id=#{t_id}
+    </update>
+
+</mapper>

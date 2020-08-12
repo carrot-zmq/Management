@@ -7,9 +7,26 @@
         select * from tenant_table where t_id = #{tenantId} and is_deleted = 'N'
     </select>
 
-    <insert id="add" parameterType="Tenant">
+    <insert id="add" parameterType="Tenant" >
         insert  into tenant_table ( t_name, t_describe, t_type, t_create_time, t_priority) values
         (#{t_name}, #{t_describe}, #{t_type}, #{t_create_time}, #{t_priority})
     </insert>
+
+    <update id="update" parameterType="Tenant" >
+        update tenant_table set t_name=#{t_name}, t_describe=#{t_describe}, t_type=#{t_type},
+        t_create_time=#{t_create_time}, t_priority=#{t_priority}, is_deleted =#{is_deleted}
+        where t_id = #{t_id}
+    </update>
+    <!--
+    <update id="updateTenantDesc" parameterType="map">
+        update tenant_table set t_name=#{t_name}, t_describe=#{t_describe}, t_type=#{t_type},
+        t_create_time=#{t_create_time}, t_priority=#{t_priority}, is_deleted =#{is_deleted}
+        where t_id = #{t_id}
+    </update>
+    -->
+
+    <update id="remove" parameterType="Tenant" >
+        update tenant_table set is_deleted='N' where t_id=#{t_id}
+    </update>
 
 </mapper>

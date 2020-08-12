@@ -15,6 +15,6 @@ public interface AuthenticationService {
      * @param pwd
      * @return
      */
-    boolean login(String id, String pwd, HttpServletRequest request, HttpServletResponse response);
+    String login(String id, String pwd, HttpServletRequest request, HttpServletResponse response);
 
 }

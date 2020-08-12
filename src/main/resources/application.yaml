@@ -1,5 +1,5 @@
 server:
-  port: 8091
+  port: 8090
 
 #### Database Connection Pool Properties
 spring:
@@ -19,9 +19,17 @@ mybatis:
   #configuration:
     # mapUnderscoreToCamelCase: true
 
-
 soochow.zmq:
   anonymous-urls:
     - /hello
     - /registerAccount
-  login-url: /abc
+    - /tologin
+    - /resetPassword
+    - /favicon.ico
+    - /**/*.js
+    - /**/*.html
+    - /**/*.css
+    - /**/img/**
+    - /**/font/**
+
+  login-url: /login

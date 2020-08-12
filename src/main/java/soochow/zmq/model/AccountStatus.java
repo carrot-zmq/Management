@@ -9,5 +9,6 @@ public enum AccountStatus {
     /**
      * 冻结
      */
-    Frozen
+    Frozen,
+
 }

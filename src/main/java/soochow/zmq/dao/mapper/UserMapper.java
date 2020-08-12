@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import soochow.zmq.model.User;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface UserMapper {
@@ -32,6 +33,8 @@ public interface UserMapper {
     boolean removeByUserName(@Param("name") String name);
 
 
+    int updateUserPwdReset(Map<String, Object> params);
+
     /**
      * 通过 id 查询
      * @param id
@@ -49,4 +52,6 @@ public interface UserMapper {
     User queryAccount(@Param("account") String account);
 
     List<User> queryAll();
+
+    boolean alterAttribute(Map<String, Object> params);
 }

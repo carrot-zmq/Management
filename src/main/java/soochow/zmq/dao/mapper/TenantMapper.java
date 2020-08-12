@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import soochow.zmq.model.Tenant;
 
+
 @Mapper
 public interface TenantMapper {
 
@@ -11,7 +12,9 @@ public interface TenantMapper {
 
     boolean update(Tenant tenant);
 
-    boolean updateTenantDesc(Long tenantId, String desc);
+    //boolean updateTenantDesc(Long tenantId, String desc);
+
+    //List<Tenant> updateTenantDesc(@Param("tenantId") Long tenantId, @Param("desc") String desc);
 
     boolean remove(Tenant tenant);
 
