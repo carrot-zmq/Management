@@ -2,6 +2,8 @@ package soochow.zmq.dao.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.web.bind.annotation.PostMapping;
 import soochow.zmq.model.User;
 
 import java.util.List;
@@ -33,6 +35,8 @@ public interface UserMapper {
     boolean removeByUserName(@Param("name") String name);
 
 
+    int updatePwd(Map<String, Object> params);
+
     int updateUserPwdReset(Map<String, Object> params);
 
     /**
@@ -53,5 +57,9 @@ public interface UserMapper {
 
     List<User> queryAll();
 
-    boolean alterAttribute(Map<String, Object> params);
+    List<User> queryByLike(@Param("nameortel") String nameortel);
+
+    int alterAttribute(Map<String, Object> params);
+
+    int countByTenant(@Param("t_id") long t_id);
 }

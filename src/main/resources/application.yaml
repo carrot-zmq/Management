@@ -26,6 +26,10 @@ soochow.zmq:
     - /tologin
     - /resetPassword
     - /favicon.ico
+    - /queryUser/*
+    - /queryByLike/*
+    - /queryAll
+    - /**
     - /**/*.js
     - /**/*.html
     - /**/*.css

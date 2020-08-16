@@ -83,19 +83,23 @@ public class UserManageServiceImpl implements UserManageService {
         String secretKey = RandomStringUtils.random(20, 0, 0, true, true, null, secureRandom); // 密钥
         Date expiredDate = new Date(System.currentTimeMillis() + 30 * 60 * 1000);// 30分钟后过期
 
+        long date = expiredDate.getTime() / 1000 * 1000;
+
+        String key = user.getU_name() + "$" + date + "$" + secretKey;
+
+        String digitalSignature = DigestUtils.md5DigestAsHex(key.getBytes());
+
         Map<String, Object> params = new HashMap<>();
         params.put("expiredDate", expiredDate);
         params.put("u_id", user.getU_id());
-        params.put("secretKey", secretKey);
+        params.put("secretKey", digitalSignature);
 
         int updateRes = userMapper.updateUserPwdReset(params);
         if (0 == updateRes) {
             return ImmutablePair.of(false, "oops, something unusual happened! Try it again");
         }
 
-        long date = expiredDate.getTime() / 1000 * 1000;
-
-        boolean sendResult = sendmail(user, date, baseRequestPath, secretKey);
+        boolean sendResult = sendmail(user, baseRequestPath, digitalSignature);
 
         if (sendResult) {
             return ImmutablePair.of(true, "重置密码邮件已经发送，请登陆邮箱进行重置！");
@@ -112,75 +116,23 @@ public class UserManageServiceImpl implements UserManageService {
             params.put("attribute", "u_status");
             params.put("value", AccountStatus.Frozen);
             params.put("u_id", user.getU_id());
-            return userMapper.alterAttribute(params);
+            if (0!=userMapper.alterAttribute(params)){return true;};
         }
-        else
+
         return false;
     }
-    private boolean sendmail(User user, long date, String baseRequestPath, String secretKey) {
+    private boolean sendmail(User user, String baseRequestPath, String digitalSignature) {
 
-        String key = user.getU_name() + "$" + date + "$" + secretKey;
-
-        String digitalSignature = DigestUtils.md5DigestAsHex(key.getBytes());
-
-
-        String resetPassHref = baseRequestPath + "checkLink?sid="
+        String resetPassHref = baseRequestPath + "checkLink="
                 + digitalSignature + "&userName=" + user.getU_name();
+
         String emailContent = "请勿回复本邮件.点击下面的链接,重设密码<br/><a href="
                 + resetPassHref + " target='_BLANK'>" + resetPassHref
                 + "</a>  或者    <a href=" + resetPassHref
                 + " target='_BLANK'>点击我重新设置密码</a>"
-                + "<br/>tips:本邮件超过30分钟,链接将会失效，需要重新申请'找回密码'" + key
-                + "\t" + digitalSignature;
+                + "<br/>tips:本邮件超过30分钟,链接将会失效，需要重新申请'找回密码'";
 
         return emailService.send("XXX网站密码重置", user.getU_email(), emailContent);
     }
 
-    //todo 该方法是对之后用户点击重置链接之后进行的处理：校验
-   /* public String checkResetLink() {
-        System.out.println("sid>>>" + sid);
-
-        if (sid.equals("")  || userName.equals("")) {
-            this.getRequest().setAttribute("mesg", "链接不完整,请重新生成");
-            System.out.println(">>>>> null");
-            return "error";
-        }
-        HibernateTemplate ht = this.getUserHander().getUsersDAO().getHibernateTemplate();
-        SessionFactory factory = ht.getSessionFactory();
-        Session session = factory.openSession();
-        Criteria criteria = session.createCriteria(Users.class);
-        criteria.add(Restrictions.eq("userName", userName));
-        List<Users> list = criteria.list();
-        if (list.size()>0) {
-            users=list.get(0);
-
-            Timestamp outDate = (Timestamp) users.getOutDate();
-            System.out.println("outDate>>>"+outDate);
-            if(outDate.getTime() <= System.currentTimeMillis()){ //表示已经过期
-                this.getRequest().setAttribute("mesg", "链接已经过期,请重新申请找回密码.");
-                System.out.println("时间 超时");
-                return "error";
-            }
-
-            String key = users.getUserName()+"$"+outDate.getTime()/1000*1000+"$"+users.getValidataCode();//数字签名
-
-            System.out.println("key link》》"+key);
-            String digitalSignature = Md5.md5(key);// 数字签名
-
-            System.out.println("digitalSignature>>>>"+digitalSignature);
-            if(!digitalSignature.equals(sid)) {
-                this.getRequest().setAttribute("mesg", "链接不正确,是否已经过期了?重新申请吧.");
-                System.out.println("标示不正确");
-                return "error";
-            }else {
-                //链接验证通过 转到修改密码页面
-                this.getRequest().setAttribute("user", users);
-                return "success";
-            }
-        }else {
-            this.getRequest().setAttribute("mesg", "链接错误,无法找到匹配用户,请重新申请找回密码.");
-            System.out.println("用户不存在");
-            return "error";
-        }
-    }*/
 }

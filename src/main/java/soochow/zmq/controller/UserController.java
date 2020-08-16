@@ -1,6 +1,11 @@
 package soochow.zmq.controller;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -12,9 +17,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import soochow.zmq.dao.mapper.UserMapper;
+import soochow.zmq.model.AccountStatus;
 import soochow.zmq.model.ResultVO;
 import soochow.zmq.model.User;
 import soochow.zmq.service.AuthenticationService;
+import soochow.zmq.service.EmailService;
 import soochow.zmq.service.UserManageService;
 import soochow.zmq.service.UserQueryService;
 
@@ -32,10 +39,16 @@ public class UserController {
     UserManageService userManageService;
 
     @Resource
+    UserQueryService userQueryService;
+
+    @Resource
     private UserMapper userMapper;
 
     @Resource
     private AuthenticationService authenticationService;
+
+    @Resource
+    private EmailService emailService;
 
 
     @PutMapping("/registerAccount")
@@ -68,12 +81,34 @@ public class UserController {
         return user;
     }
 
-    @PutMapping("/frozen")
-    public boolean frozen(@RequestBody User user){
+    @PostMapping("/frozen")
+    @ResponseBody
+    public Boolean frozen(@RequestBody User user){
         return userManageService.frozen(user);
     }
 
+    @PostMapping("/checkLink={sig}&userName={account}")
+    @ResponseBody
+    public void forgetPwd(@PathVariable("sig") String sig, @PathVariable("account") String account, @RequestParam("pwd") String pwd) {
+        Map<String, Object> params = new HashMap<>();
+        Date nowDate = new Date(System.currentTimeMillis());
+        String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(nowDate);
+
+        params.put("pwd", pwd);
+        params.put("account", account);
+        params.put("secretKey", sig);
+        params.put("expiredDate", timeStamp);
+        if(userMapper.updatePwd(params)>0){
+            System.out.println("密码修改成功！");
+        }
+        else {
+            System.out.println("修改失败");
+        }
+
+    }
+    
     @PostMapping("/resetPassword")
+    @ResponseBody
     public void resetPwd(@RequestParam("account") String account, HttpServletRequest request) {
         //todo 返回值重新设计一下，考虑交互
         if (StringUtils.isBlank(account)) {
@@ -84,8 +119,8 @@ public class UserController {
                 + request.getServerPort() + request.getContextPath() + "/";
         log.info("another way:{}", request.getRequestURL());
 
-
         Pair<Boolean, String> result = userManageService.resetPwd(account, basePath);
+        System.out.println(result);
 
     }
 
@@ -109,12 +144,35 @@ public class UserController {
         }
     }
 
+    @GetMapping("/queryAll")
+    @ResponseBody
+    public List<User> queryAll(){
+        return userQueryService.queryAll();
+    }
+
     @GetMapping("/queryUser/{id}")
-    public User query(@PathVariable long id) {
+    @ResponseBody
+    public User query(@PathVariable("id") long id) {
         User user = userMapper.queryById(id);
         return null == user ? new User() : user;
 
     }
+
+    @GetMapping("/queryByLike/{nameortel}")
+    @ResponseBody
+    public List<User> queryByLike(@PathVariable String nameortel){
+        nameortel='%'+nameortel+'%';
+        return userQueryService.queryByLike(nameortel);
+    }
+
+    @GetMapping("/countByTenant/{t_id}")
+    @ResponseBody
+    public int countByTenant(@PathVariable long t_id){
+        return userQueryService.countByTenant(t_id);
+
+    }
+
+
 
 
 

@@ -12,8 +12,11 @@ public class PwdValidator {
 
 
    public boolean isStrongEnough(String password) {
-        return StringUtils.isNotBlank(password) && password.length() >= 6 && !PURE_NUMBER.matcher(password).matches()
-                && !PURE_LOWERCASE_CHAR.matcher(password).matches() && !PURE_UPPER_CASE.matcher(password).matches();
+        return StringUtils.isNotBlank(password) &&
+                password.length() >= 6 &&
+                !PURE_NUMBER.matcher(password).matches() &&
+                !PURE_LOWERCASE_CHAR.matcher(password).matches() &&
+                !PURE_UPPER_CASE.matcher(password).matches();
 
     }
 }

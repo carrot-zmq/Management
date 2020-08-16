@@ -21,6 +21,7 @@ public class EmailService {
 
     private final Properties prop = new Properties();
 
+    //使用Authenticator为HTTP认证提供用户名和口令
     private Authenticator emailAuthenticator;
 
     private String fromAddress;
@@ -64,6 +65,7 @@ public class EmailService {
 
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromAddress));
+            //设置收件人TO是指主要收件人/CC抄送收件人/BCC秘密抄送收件人
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toAddress));
             message.setSubject(StringUtils.isEmpty(subject) ? "密码重置" : subject);
 

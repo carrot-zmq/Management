@@ -28,6 +28,10 @@
         select * from user_table where (u_name = #{account} or u_email = #{account} or u_phone = #{account}) and is_deleted = 'N'
     </select>
 
+    <select id="queryByLike" parameterType="java.lang.String" resultType="User">
+        select * from user_table where (u_name like #{nameortel} or u_phone like #{nameortel})
+    </select>
+
     <insert id="add" parameterType="User" useGeneratedKeys="true" keyProperty="u_id" keyColumn="u_id">
         insert into user_table( owned_tenant, u_name, u_real_name, pwd, u_status, u_describe, u_phone, u_email, u_create_time, u_modified_by) values
         (#{owned_tenant}, #{u_name}, #{u_real_name}, #{pwd}, #{u_status}, #{u_describe}, #{u_phone}, #{u_email}, #{u_create_time}, #{u_modified_by})
@@ -37,15 +41,24 @@
         update user_table set is_deleted='Y' where (u_name=#{name} and is_deleted='N')
     </update>
 
+    <update id="updatePwd" parameterType="java.util.Map">
+        update user_table set pwd = #{pwd} where (u_name = #{account} and secret_key= #{secretKey} and u_pwd_reset_expired &gt; #{expiredDate} and is_deleted='N')
+    </update>
+
     <update id="updateUserPwdReset" parameterType="java.util.Map">
-        update user_table set u_pwd_reset_expired = #{expiredDate}, u_secret_key = #{secretKey} where u_id = #{u_id}
+        update user_table set u_pwd_reset_expired = #{expiredDate}, secret_key = #{secretKey} where u_id = #{u_id}
     </update>
 
     <update id="alterAttribute" parameterType="java.util.Map">
-        update user_table set #{attribute} = #{value} where u_id = #{u_id}
+        update user_table set u_status = #{value} where u_id = #{u_id}
     </update>
+
     <!--有问题 -->
     <delete id="remove" parameterType="User">
         delete from user_table where u_id=#{user.getu_id()}
     </delete>
+
+    <select id="countByTenant" parameterType="long" resultType="int">
+        select count(*) from user_table where owned_tenant=#{t_id}
+    </select>
 </mapper>

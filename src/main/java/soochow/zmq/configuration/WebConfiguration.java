@@ -7,6 +7,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import soochow.zmq.filter.AuthFilter;
+import soochow.zmq.service.EmailService;
 
 @Configuration
 @EnableConfigurationProperties(AppProperties.class)
@@ -15,7 +16,6 @@ public class WebConfiguration  {
 
     @Autowired
     AppProperties appProperties;
-
 
     @Bean
     public AuthFilter authFilter() {
