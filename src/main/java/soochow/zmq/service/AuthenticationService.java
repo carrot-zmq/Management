@@ -2,6 +2,7 @@ package soochow.zmq.service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public interface AuthenticationService {
 
@@ -15,6 +16,6 @@ public interface AuthenticationService {
      * @param pwd
      * @return
      */
-    String login(String id, String pwd, HttpServletRequest request, HttpServletResponse response);
+    String login(String id, String pwd, HttpServletRequest request, HttpServletResponse response) throws IOException;
 
 }
